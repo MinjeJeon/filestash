@@ -456,7 +456,9 @@ func (s S3Backend) Save(path string, file io.Reader) error {
 	if p.bucket == "" {
 		return ErrNotValid
 	}
-	uploader := s3manager.NewUploader(s.createSession(p.bucket))
+	uploader := s3manager.NewUploader(s.createSession(p.bucket), func(u *s3manager.Uploader) {
+		u.MaxUploadParts = 1
+	})
 	input := s3manager.UploadInput{
 		Body:   file,
 		Bucket: aws.String(p.bucket),
